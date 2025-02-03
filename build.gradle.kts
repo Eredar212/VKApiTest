@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id("java")
     id("application")
@@ -25,16 +28,21 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
     // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+// https://mvnrepository.com/artifact/org.json/json
+    implementation("org.json:json:20250107")
+    implementation("org.instancio:instancio-junit:3.3.0")
 
-
-
-
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    // https://mvnrepository.com/artifact/org.json/json
-    implementation("org.json:json:20250107")
+
 }
 
 tasks.test {
     useJUnitPlatform()
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
+        showStandardStreams = true
+    }
 }
