@@ -27,4 +27,12 @@ public class IsMemberRequest {
     public String getGroupId() {
         return groupId;
     }
+
+    @Override
+    public String toString() {
+        return "IsMemberRequest{" +
+                "userId=" + userId +
+                ", groupId='" + groupId + '\'' +
+                '}';
+    }
 }

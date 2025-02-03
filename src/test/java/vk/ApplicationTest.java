@@ -42,7 +42,8 @@ public class ApplicationTest {
                 .supply(Select.field(IsMemberRequest::getGroupId), () -> "121123")
                 .create();
         var request = get("/")
-                .contentType(MediaType.APPLICATION_JSON);
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(req));
         var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();
@@ -54,7 +55,7 @@ public class ApplicationTest {
     public void testWrongToken() throws Exception {
         var req = Instancio.of(IsMemberRequest.class)
                 .supply(Select.field(IsMemberRequest::getUserId), () -> 121123)
-                .supply(Select.field(IsMemberRequest::getGroupId), () -> "121123")
+                .supply(Select.field(IsMemberRequest::getGroupId), () -> "121124")
                 .create();
         var request = get("/")
                 .header("vk_service_token", "123123124")

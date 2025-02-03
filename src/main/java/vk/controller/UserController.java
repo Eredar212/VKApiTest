@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import org.json.JSONObject;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,10 +28,11 @@ import java.util.Map;
 @Validated
 public class UserController {
     @Tag(name = "Получение информации о пользователе", description = "Получение ФИО и наличие пользователя в группе")
+    @Cacheable(value = "member", key = "#isMemberRequest?.userId + '-' + #isMemberRequest?.groupId")
     @GetMapping()
     public String getUserMembershipInfo(@RequestHeader(value = "vk_service_token", required = false)
-                                            @Parameter(description = "Токен VK")
-                                            @NotBlank(message = "vk_service_token не должен быть пустым") String token,
+                                        @Parameter(description = "Токен VK")
+                                        @NotBlank(message = "vk_service_token не должен быть пустым") String token,
                                         @RequestBody(required = false) @Validated
                                         @Parameter(description = "Запрос в формате JSON")
                                         IsMemberRequest isMemberRequest) {
@@ -41,6 +44,8 @@ public class UserController {
             if (token == null) {
                 return mapper.writeValueAsString(Map.of("error", "Не передан токен"));
             }
+            System.out.println("getting membership info" + isMemberRequest.toString());
+
             int userId = isMemberRequest.getUserId();
             String groupId = isMemberRequest.getGroupId();
 
@@ -92,7 +97,7 @@ public class UserController {
                 return mapper.writeValueAsString(Map.of("error",
                         "Неизвестная ошибка получения данных об участии в группе"));
             }
-
+            System.out.println("get membership info" + result.toString());
             return result.toString();
 
         } catch (JsonProcessingException e) {
