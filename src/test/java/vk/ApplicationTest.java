@@ -3,15 +3,19 @@ package vk;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.instancio.Instancio;
 import org.instancio.Select;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import vk.dto.IsMemberRequest;
+import vk.utils.UserUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,12 +26,22 @@ public class ApplicationTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper om;
+    @Autowired
+    private UserUtils userUtils;
 
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
+
+
+    @BeforeEach
+    public void setUp() {
+        token = jwt().jwt(builder -> builder.subject(userUtils.getTestUser().getEmail()));
+    }
     @Test
     public void testNullBody() throws Exception {
         var request = get("/")
                 .header("vk_service_token", "123123124")
-                .contentType(MediaType.APPLICATION_JSON);
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(token);
         var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();
@@ -43,7 +57,8 @@ public class ApplicationTest {
                 .create();
         var request = get("/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(om.writeValueAsString(req));
+                .content(om.writeValueAsString(req))
+                .with(token);
         var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();
@@ -61,7 +76,8 @@ public class ApplicationTest {
                 .header("vk_service_token", "123123124")
                 .contentType(MediaType.APPLICATION_JSON)
                 // ObjectMapper конвертирует Map в JSON
-                .content(om.writeValueAsString(req));
+                .content(om.writeValueAsString(req))
+                .with(token);
         var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();
