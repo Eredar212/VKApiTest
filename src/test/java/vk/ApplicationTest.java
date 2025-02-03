@@ -17,6 +17,7 @@ import vk.utils.UserUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -38,7 +39,7 @@ public class ApplicationTest {
     }
     @Test
     public void testNullBody() throws Exception {
-        var request = get("/")
+        var request = post("/")
                 .header("vk_service_token", "123123124")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(token);
@@ -55,7 +56,7 @@ public class ApplicationTest {
                 .supply(Select.field(IsMemberRequest::getUserId), () -> 121123)
                 .supply(Select.field(IsMemberRequest::getGroupId), () -> "121123")
                 .create();
-        var request = get("/")
+        var request = post("/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(req))
                 .with(token);
@@ -72,7 +73,7 @@ public class ApplicationTest {
                 .supply(Select.field(IsMemberRequest::getUserId), () -> 121123)
                 .supply(Select.field(IsMemberRequest::getGroupId), () -> "121124")
                 .create();
-        var request = get("/")
+        var request = post("/")
                 .header("vk_service_token", "123123124")
                 .contentType(MediaType.APPLICATION_JSON)
                 // ObjectMapper конвертирует Map в JSON

@@ -3,6 +3,7 @@ package vk.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,11 +31,14 @@ import java.util.Map;
 public class UserController {
     @Tag(name = "Получение информации о пользователе", description = "Получение ФИО и наличие пользователя в группе")
     @Cacheable(value = "member", key = "#isMemberRequest?.userId + '-' + #isMemberRequest?.groupId")
-    @GetMapping()
+    @SecurityRequirement(name = "JWT")
+    @PostMapping()
     public String getUserMembershipInfo(@RequestHeader(value = "vk_service_token", required = false)
                                         @Parameter(description = "Токен VK")
-                                        @NotBlank(message = "vk_service_token не должен быть пустым") String token,
-                                        @RequestBody(required = false) @Validated
+                                        @NotBlank(message = "vk_service_token не должен быть пустым")
+                                            String token,
+                                        @RequestBody(required = false)
+                                        @Validated
                                         @Parameter(description = "Запрос в формате JSON")
                                         IsMemberRequest isMemberRequest) {
         ObjectMapper mapper = new ObjectMapper();
