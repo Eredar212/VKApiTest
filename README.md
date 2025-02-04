@@ -2,6 +2,7 @@
 Для отправки API-запросов используйте HTTP-метод POST
 ## Формат сообщений
 Обязательный заголовок "vk_service_token" - подробнее [cм.тут](https://dev.vk.com/ru/api/access-token/getting-started)
+
 Authorization: Bearer <токен, полученный после авторизации>
 
 Тело запроса - формат JSON, состав зависит от метода
