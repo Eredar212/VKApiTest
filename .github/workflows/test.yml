@@ -12,6 +12,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Execute Gradle build
-        run: make --directory app/ build
+        run: make build
         env:
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
