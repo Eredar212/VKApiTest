@@ -24,6 +24,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import vk.dto.IsMemberRequest;
 import vk.utils.GetAPIParams;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -32,7 +34,7 @@ public class UserController {
     @Tag(name = "Получение информации о пользователе", description = "Получение ФИО и наличие пользователя в группе")
     @Cacheable(value = "member", key = "#isMemberRequest?.userId + '-' + #isMemberRequest?.groupId")
     @SecurityRequirement(name = "JWT")
-    @PostMapping()
+    @PostMapping("/isMember")
     public String getUserMembershipInfo(@RequestHeader(value = "vk_service_token", required = false)
                                         @Parameter(description = "Токен VK")
                                         @NotBlank(message = "vk_service_token не должен быть пустым")
@@ -77,32 +79,35 @@ public class UserController {
             ResponseEntity<String> responseUserGet = restTemplate.exchange(builderUserGet.build().encode().toUri(),
                     HttpMethod.POST, requestUserGet, String.class);
 
-            boolean member;
+            /*boolean member;
             String userFName;
             String userLName;
-            String userMName;
+            String userMName;*/
             JSONObject result = new JSONObject();
-            Map<String, Map> responseMap = mapper.readValue(responseUserGet.getBody(), Map.class);
+            Map<String, Object> responseMap = mapper.readValue(responseUserGet.getBody(), Map.class);
+            System.out.println("getting USER info" + responseMap.toString());
             if (responseMap.containsKey("error")) {
-                return mapper.writeValueAsString(Map.of("error", responseMap.get("error").get("error_msg")));
+                return mapper.writeValueAsString(Map.of("error", ((HashMap<String,String>)(responseMap.get("error"))).get("error_msg")));
             } else if (responseMap.containsKey("response")) {
-                result.put("last_name", responseMap.get("response").get("last_name").toString());
-                result.put("first_name", responseMap.get("response").get("first_name").toString());
-                result.put("middle_name", responseMap.get("response").get("nickname").toString());
+                var response = ((ArrayList<HashMap<String,String>>)(responseMap.get("response"))).get(0);
+                result.put("last_name", response.get("last_name"));
+                result.put("first_name", response.get("first_name"));
+                result.put("middle_name", response.get("nickname"));
             } else {
                 return mapper.writeValueAsString(Map.of("error",
                         "Неизвестная ошибка получения информации о пользователе"));
             }
             responseMap = mapper.readValue(responseIsMember.getBody(), Map.class);
+            System.out.println("getting IsMEMBER info" + responseMap.toString());
             if (responseMap.containsKey("error")) {
-                return mapper.writeValueAsString(Map.of("error", responseMap.get("error").get("error_msg")));
+                return mapper.writeValueAsString(Map.of("error", ((HashMap<String,String>)(responseMap.get("error"))).get("error_msg")));
             } else if (responseMap.containsKey("response")) {
-                result.put("member", responseMap.get("response").get("member").toString().equals("1"));
+                result.put("member", responseMap.get("response").toString().equals("1"));
             } else {
                 return mapper.writeValueAsString(Map.of("error",
                         "Неизвестная ошибка получения данных об участии в группе"));
             }
-            System.out.println("get membership info" + result.toString());
+            //System.out.println("get membership info" + result.toString());
             return result.toString();
 
         } catch (JsonProcessingException e) {

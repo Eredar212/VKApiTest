@@ -39,7 +39,7 @@ public class ApplicationTest {
     }
     @Test
     public void testNullBody() throws Exception {
-        var request = post("/")
+        var request = post("/isMember")
                 .header("vk_service_token", "123123124")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(token);
@@ -56,7 +56,7 @@ public class ApplicationTest {
                 .supply(Select.field(IsMemberRequest::getUserId), () -> 121123)
                 .supply(Select.field(IsMemberRequest::getGroupId), () -> "121123")
                 .create();
-        var request = post("/")
+        var request = post("/isMember")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(req))
                 .with(token);
@@ -73,10 +73,9 @@ public class ApplicationTest {
                 .supply(Select.field(IsMemberRequest::getUserId), () -> 121123)
                 .supply(Select.field(IsMemberRequest::getGroupId), () -> "121124")
                 .create();
-        var request = post("/")
+        var request = post("/isMember")
                 .header("vk_service_token", "123123124")
                 .contentType(MediaType.APPLICATION_JSON)
-                // ObjectMapper конвертирует Map в JSON
                 .content(om.writeValueAsString(req))
                 .with(token);
         var result = mockMvc.perform(request)
@@ -84,6 +83,27 @@ public class ApplicationTest {
                 .andReturn();
         var body = result.getResponse().getContentAsString();
         assertThat(body).contains("error");
+    }
+
+    @Test
+    public void testToken() throws Exception {
+        if (System.getenv("VK_TOKEN") != null) {
+            var vkToken = System.getenv("VK_TOKEN");
+            var req = Instancio.of(IsMemberRequest.class)
+                    .supply(Select.field(IsMemberRequest::getUserId), () -> 19537439)
+                    .supply(Select.field(IsMemberRequest::getGroupId), () -> "proyasnil")
+                    .create();
+            var request = post("/isMember")
+                    .header("vk_service_token", vkToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsString(req))
+                    .with(token);
+            var result = mockMvc.perform(request)
+                    .andExpect(status().isOk())
+                    .andReturn();
+            var body = result.getResponse().getContentAsString();
+            assertThat(body).contains("Bykov");
+        }
     }
 
 //нужен еще тест на реальных данных
