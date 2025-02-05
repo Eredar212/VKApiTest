@@ -16,9 +16,10 @@ jobs:
         env:
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
       - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v5.0.0
+        uses: paambaati/codeclimate-action@v9.0.0
         env:
           # Set CC_TEST_REPORTER_ID as secret of your repo
+          VK_TOKEN: ${{ secrets.VK_TOKEN }}
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_ID }}
           JACOCO_SOURCE_PATH: app/src/main/java
         with:
