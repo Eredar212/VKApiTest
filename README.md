@@ -1,3 +1,6 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/2980e50b6ec282e01760/maintainability)](https://codeclimate.com/github/Eredar212/VKApiTest/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/2980e50b6ec282e01760/test_coverage)](https://codeclimate.com/github/Eredar212/VKApiTest/test_coverage)
+
 # Получение данных о пользователе на основе данных VK
 Для отправки API-запросов используйте HTTP-метод POST
 ## Формат сообщений
