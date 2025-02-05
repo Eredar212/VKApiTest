@@ -11,17 +11,13 @@ jobs:
           java-version: 21
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Execute Gradle build
-        run: make build
-        env:
-          VK_TOKEN: ${{ secrets.VK_TOKEN }}
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v9.0.0
         env:
           # Set CC_TEST_REPORTER_ID as secret of your repo
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_ID }}
-          JACOCO_SOURCE_PATH: app/src/main/java
+          JACOCO_SOURCE_PATH: src/main/java
         with:
           # The report file must be there, otherwise Code Climate won't find it
           coverageCommand: make test_report
