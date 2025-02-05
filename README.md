@@ -28,18 +28,44 @@ Authorization: Bearer <токен, полученный после автори�
    "password": "admin"
 }
 ```
+```
+curl -X 'POST' \
+  'http://localhost:8080/login' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "username": "admin@example.com",
+  "password": "admin"
+}'
+```
 
 ## Проверка участия пользователя в группе
-адрес "/"
+адрес "/isMember"
 
 Пример запроса
 ```
 {
-   "user_id": 743784474,
-   "group_id": "12354889"
+   "user_id": 19537439,
+   "group_id": "proyasnil"
 }
 ```
-
+```
+curl -X 'POST' \
+  'http://localhost:8080/isMember' \
+  -H 'accept: */*' \
+  -H 'vk_service_token: <vk_service_token>' \
+  -H 'Authorization: Bearer <auth_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "user_id": 19537439,
+  "group_id": "proyasnil"
+}'
+```
 user_id - идентификатор пользователя VK, integer
 
 group_id - идентификатор группы VK, string
+
+Пример ответа
+```
+{"member":true,"last_name":"Bykov","middle_name":"","first_name":"Viktor"}
+```
