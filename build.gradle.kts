@@ -7,6 +7,7 @@ plugins {
     id("org.springframework.boot") version "3.2.0"
     id("io.spring.dependency-management") version "1.1.4"
     id("io.freefair.lombok") version "8.6"
+    jacoco
 }
 
 group = "vk.user"
@@ -26,6 +27,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    // https://mvnrepository.com/artifact/org.apache.maven.reporting/maven-reporting-api
+    implementation("org.apache.maven.reporting:maven-reporting-api:4.0.0")
+
+    // https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin
+    implementation("org.jacoco:jacoco-maven-plugin:0.8.12")
+
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     runtimeOnly("com.h2database:h2")
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
@@ -51,4 +58,11 @@ tasks.test {
         events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
         showStandardStreams = true
     }
+}
+tasks.jacocoTestReport {
+    dependsOn (tasks.test) // tests are required to run before generating the report
+            reports {
+                xml.required = true
+                html.required = true
+            }
 }
